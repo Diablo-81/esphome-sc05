@@ -1,0 +1,9 @@
+{
+  "domain": "sc05",
+  "name": "SC05 UART Gas Sensor",
+  "version": "0.1.0",
+  "documentation": "https://github.com/Diablo-81/esphome-sc05",
+  "dependencies": ["uart"],
+  "codeowners": ["@Diablo-81"],
+  "requirements": []
+}
