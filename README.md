@@ -84,14 +84,23 @@ sensor:
     nh3:
       name: "Capannone-4 NH3"
 
+    full_scale:
+      name: "Capannone-4 SC05 Full Scale"
+
     crc_errors:
       name: "Capannone-4 SC05 CRC Errors"
 
     lost_frames:
       name: "Capannone-4 SC05 Lost Frames"
 
+    invalid_frame_counter:
+      name: "Capannone-4 SC05 Invalid Frames"
+
     timeout_counter:
       name: "Capannone-4 SC05 Timeout Counter"
+
+    last_frame_age:
+      name: "Capannone-4 SC05 Last Frame Age"
 
     online:
       name: "Capannone-4 SC05 Online"
@@ -99,6 +108,22 @@ sensor:
     status:
       name: "Capannone-4 SC05 Stato"
 ```
+
+
+## Diagnostics
+
+The component exposes separate diagnostic entities so installation and long-running reliability issues can be identified without conflating different failure modes:
+
+| Entity | Meaning | Typical action |
+| --- | --- | --- |
+| CRC Errors | Frames with a valid length but a checksum that does not match the configured checksum algorithm. | Check UART noise, grounding, cable length, and confirm the checksum against captured sensor frames. |
+| Lost Frames | Parser-level recovery events, such as a partial frame timing out or a new `0xFF` start byte appearing while another frame is being assembled. | Check serial wiring quality and electrical noise. |
+| Invalid Frames | Checksum-valid frames whose semantic fields do not match the supported SC05-NH3 profile, currently unit `0x04` and decimal byte `0x00`. | Verify the exact SC05 model, gas variant, and datasheet. |
+| Timeout Counter | Number of times no fully valid, supported frame arrived before `communication_timeout`. | Check sensor power, UART pins, baud rate, and sensor availability. |
+| Last Frame Age | Milliseconds since the last fully valid and supported frame was accepted. | Use for live debugging and alert thresholds. |
+| Full Scale | Full-scale value reported by the sensor frame bytes 6 and 7. | Verify the installed module range, currently expected to be 100 ppm for SC05-NH3 0–100 ppm. |
+
+A frame only marks the sensor as online after checksum, unit, decimal, and gas support checks have all passed. Unsupported gases keep the UART parser synchronized and publish status `Unsupported gas` without incrementing `lost_frames`.
 
 ## Protocol notes
 

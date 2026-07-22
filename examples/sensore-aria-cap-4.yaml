@@ -40,14 +40,23 @@ sensor:
     nh3:
       name: "Capannone-4 NH3"
 
+    full_scale:
+      name: "Capannone-4 SC05 Full Scale"
+
     crc_errors:
       name: "Capannone-4 SC05 CRC Errors"
 
     lost_frames:
       name: "Capannone-4 SC05 Lost Frames"
 
+    invalid_frame_counter:
+      name: "Capannone-4 SC05 Invalid Frames"
+
     timeout_counter:
       name: "Capannone-4 SC05 Timeout Counter"
+
+    last_frame_age:
+      name: "Capannone-4 SC05 Last Frame Age"
 
     online:
       name: "Capannone-4 SC05 Online"

@@ -15,8 +15,11 @@ AUTO_LOAD = ["binary_sensor", "text_sensor"]
 CONF_NH3 = "nh3"
 CONF_ONLINE = "online"
 CONF_STATUS = "status"
+CONF_FULL_SCALE = "full_scale"
 CONF_CRC_ERRORS = "crc_errors"
 CONF_LOST_FRAMES = "lost_frames"
+CONF_INVALID_FRAME_COUNTER = "invalid_frame_counter"
+CONF_LAST_FRAME_AGE = "last_frame_age"
 CONF_TIMEOUT_COUNTER = "timeout_counter"
 CONF_COMMUNICATION_TIMEOUT = "communication_timeout"
 
@@ -31,6 +34,12 @@ CONFIG_SCHEMA = cv.All(
                 unit_of_measurement=UNIT_PARTS_PER_MILLION,
                 accuracy_decimals=2,
                 icon="mdi:molecule",
+                state_class=STATE_CLASS_MEASUREMENT,
+            ),
+            cv.Optional(CONF_FULL_SCALE): sensor.sensor_schema(
+                accuracy_decimals=0,
+                icon="mdi:gauge",
+                entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
             cv.Optional(CONF_ONLINE): binary_sensor.binary_sensor_schema(
@@ -52,9 +61,22 @@ CONFIG_SCHEMA = cv.All(
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
+            cv.Optional(CONF_INVALID_FRAME_COUNTER): sensor.sensor_schema(
+                accuracy_decimals=0,
+                icon="mdi:counter",
+                entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
+                state_class=STATE_CLASS_MEASUREMENT,
+            ),
             cv.Optional(CONF_TIMEOUT_COUNTER): sensor.sensor_schema(
                 accuracy_decimals=0,
                 icon="mdi:counter",
+                entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
+                state_class=STATE_CLASS_MEASUREMENT,
+            ),
+            cv.Optional(CONF_LAST_FRAME_AGE): sensor.sensor_schema(
+                unit_of_measurement="ms",
+                accuracy_decimals=0,
+                icon="mdi:timer-outline",
                 entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
@@ -75,6 +97,10 @@ async def to_code(config):
         sens = await sensor.new_sensor(nh3_config)
         cg.add(var.set_nh3_sensor(sens))
 
+    if full_scale_config := config.get(CONF_FULL_SCALE):
+        sens = await sensor.new_sensor(full_scale_config)
+        cg.add(var.set_full_scale_sensor(sens))
+
     if online_config := config.get(CONF_ONLINE):
         sens = await binary_sensor.new_binary_sensor(online_config)
         cg.add(var.set_online_binary_sensor(sens))
@@ -91,8 +117,16 @@ async def to_code(config):
         sens = await sensor.new_sensor(lost_frames_config)
         cg.add(var.set_lost_frames_sensor(sens))
 
+    if invalid_frame_counter_config := config.get(CONF_INVALID_FRAME_COUNTER):
+        sens = await sensor.new_sensor(invalid_frame_counter_config)
+        cg.add(var.set_invalid_frame_counter_sensor(sens))
+
     if timeout_counter_config := config.get(CONF_TIMEOUT_COUNTER):
         sens = await sensor.new_sensor(timeout_counter_config)
         cg.add(var.set_timeout_counter_sensor(sens))
+
+    if last_frame_age_config := config.get(CONF_LAST_FRAME_AGE):
+        sens = await sensor.new_sensor(last_frame_age_config)
+        cg.add(var.set_last_frame_age_sensor(sens))
 
     cg.add(var.set_communication_timeout(config[CONF_COMMUNICATION_TIMEOUT]))
