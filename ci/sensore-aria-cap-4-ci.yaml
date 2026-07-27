@@ -1,6 +1,6 @@
 esphome:
-  name: sensore-aria-cap-4
-  friendly_name: Sensore Aria Capannone 4
+  name: sensore-aria-cap-4-ci
+  friendly_name: Sensore Aria Capannone 4 CI
 
 esp32:
   board: esp32dev
@@ -15,14 +15,13 @@ ota:
   platform: esphome
 
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
+  ssid: "ci-wifi"
+  password: "ci-password"
 
 external_components:
   - source:
-      type: git
-      url: https://github.com/Diablo-81/esphome-sc05
-      ref: main
+      type: local
+      path: ../components
     components:
       - sc05
 
