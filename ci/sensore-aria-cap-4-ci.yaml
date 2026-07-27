@@ -1,0 +1,81 @@
+esphome:
+  name: sensore-aria-cap-4-ci
+  friendly_name: Sensore Aria Capannone 4 CI
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+logger:
+
+api:
+
+ota:
+  platform: esphome
+
+wifi:
+  ssid: "ci-wifi"
+  password: "ci-password"
+
+external_components:
+  - source:
+      type: local
+      path: ../components
+    components:
+      - sc05
+
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  scan: true
+
+uart:
+  id: uart_sc05
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 9600
+
+sensor:
+  - platform: sc05
+
+    id: sc05_cap4
+
+    uart_id: uart_sc05
+
+    communication_timeout: 3s
+
+    nh3:
+      name: "Capannone-4 NH3"
+
+    full_scale:
+      name: "Capannone-4 Full Scale"
+
+    online:
+      name: "Capannone-4 Online"
+
+    status:
+      name: "Capannone-4 Stato"
+
+    crc_errors:
+      name: "Capannone-4 CRC Errors"
+
+    lost_frames:
+      name: "Capannone-4 Lost Frames"
+
+    invalid_frame_counter:
+      name: "Capannone-4 Invalid Frames"
+
+    timeout_counter:
+      name: "Capannone-4 Timeout Counter"
+
+    last_frame_age:
+      name: "Capannone-4 Last Frame Age"
+
+  - platform: scd4x
+    co2:
+      name: "Capannone-4 CO2"
+    temperature:
+      name: "Capannone-4 Temperatura"
+    humidity:
+      name: "Capannone-4 Umidità"

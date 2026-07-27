@@ -1,0 +1,20 @@
+name: ESPHome build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  compile-example:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile ESPHome example with ESPHome 2025.12.x
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/config" \
+            -w /config \
+            esphome/esphome:2025.12.7 \
+            compile ci/sensore-aria-cap-4-ci.yaml
